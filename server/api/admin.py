@@ -6,8 +6,7 @@ from .models import User, Visitor
 class SuperAdmin(UserAdmin):
     list_display = (
         "username",
-        "email",
-        "name",
+        "email",        
         "role_in_company",
         "tenure",
         "is_super_admin",

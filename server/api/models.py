@@ -2,16 +2,14 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 
+from .managers import UserManager
+
 
 class User(AbstractUser):
     is_super_admin = models.BooleanField(default=False)
     is_user = models.BooleanField(default=False)
-    name = models.CharField(max_length=255)
     role_in_company = models.CharField(max_length=255)
     tenure = models.IntegerField(help_text="Tenure in years")
-
-    first_name = models.CharField(max_length=30, blank=True)
-    last_name = models.CharField(max_length=30, blank=True)
     phone_number = models.CharField(max_length=15, unique=True)
     email = models.EmailField(unique=True)
     address = models.TextField(blank=True, null=True)
@@ -31,6 +29,8 @@ class User(AbstractUser):
         help_text="Specific permissions for this user.",
         verbose_name="user permissions",
     )
+
+    objects = UserManager()
 
     def __str__(self):
         return self.username
@@ -58,6 +58,13 @@ class Visitor(models.Model):
         ],
         default="Pending",
     )
+
+    def save(self, *args, **kwargs):
+        if self.approved:
+            self.pass_status = "Approved"
+        elif self.rejected:
+            self.pass_status = "Rejected"
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"

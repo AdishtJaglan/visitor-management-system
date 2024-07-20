@@ -48,6 +48,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
 }
 
 MIDDLEWARE = [
@@ -143,7 +144,7 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
 
-# AUTH_USER_MODEL = "api.User"
+AUTH_USER_MODEL = "api.User"
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
