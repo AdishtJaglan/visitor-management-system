@@ -1,5 +1,7 @@
 from django.shortcuts import get_object_or_404
 from django.db import IntegrityError
+from django.conf import settings
+from django.core.mail import send_mail, get_connection
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -25,7 +27,31 @@ class UserOperations(APIView):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             try:
-                serializer.save()
+                user = serializer.save()
+
+                subject = "Welcome! Your account has been created."
+                message = f"Hello {user.username},\n\nYour account has been created successfully.\nYour username is: {user.username}\nYour password is: {request.data['password']}"
+                from_email = settings.DEFAULT_FROM_EMAIL
+                to_email = [user.email]
+
+                email_connection = get_connection(
+                    backend=settings.EMAIL_BACKEND,
+                    use_tls=settings.EMAIL_USE_TLS,
+                    host=settings.EMAIL_HOST,
+                    port=settings.EMAIL_PORT,
+                    username=settings.EMAIL_HOST_USER,
+                    password=settings.EMAIL_HOST_PASSWORD,
+                    ssl_context=settings.SSL_CONTEXT,
+                )
+
+                send_mail(
+                    subject,
+                    message,
+                    from_email,
+                    to_email,
+                    connection=email_connection,
+                )
+
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             except IntegrityError as e:
                 return Response(
