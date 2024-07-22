@@ -2,6 +2,8 @@ from django.shortcuts import get_object_or_404
 from django.db import IntegrityError
 from django.conf import settings
 from django.core.mail import send_mail, get_connection
+from django.utils.crypto import get_random_string
+from django.contrib.auth.hashers import make_password
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -11,6 +13,8 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from .models import User, Visitor
 from .serializer import UserSerializer, VisitorSerializer
+
+import string
 
 
 class UserOperations(APIView):
@@ -220,3 +224,39 @@ class VisitorOperations(APIView):
                 {"error deleting visitor": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+class ResetPasswordOperations(APIView):
+    def post(self, request):
+        email = request.data.get("email")
+
+        if not email:
+            return Response(
+                {"error": "Email required."}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response(
+                {"error": "User with that email does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        new_password = get_random_string(
+            length=8, allowed_chars=string.ascii_letters + string.digits
+        )
+        user.password = make_password(new_password)
+        user.save()
+
+        send_mail(
+            "Password Reset",
+            f"Your new password is: {new_password}",
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+            fail_silently=False,
+        )
+
+        return Response(
+            {"message": "New password sent to your email."}, status=status.HTTP_200_OK
+        )
