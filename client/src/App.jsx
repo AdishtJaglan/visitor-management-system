@@ -8,7 +8,7 @@ import {
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import ResetPassword from "./pages/ResetPassword";
-import ProtectedRoute from "./components/ProtectedRoute.jsx";
+// import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 function App() {
   return (
@@ -16,17 +16,8 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/reset_password" element={<ResetPassword />} />
-
-        <Route
-          path="/home"
-          element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route path="*" element={<Navigate to="/login" />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="*" element={<Navigate to="/home" />} />
       </Routes>
     </Router>
   );

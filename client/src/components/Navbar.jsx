@@ -1,12 +1,15 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
+import Logo from "/logo.svg";
 
-export default function Navbar() {
+export default function Navbar({ navColor }) {
   const [username, setUsername] = useState(null);
   const [visible, setVisible] = useState(false);
+  const [hoverHeading, setHoverHeading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -31,17 +34,48 @@ export default function Navbar() {
     fetchUser();
   }, []);
 
-  const handleLogout = () => {};
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("rToken");
+
+    navigate("/home");
+    window.location.reload();
+  };
 
   return (
-    <nav className="sticky top-0 z-50 flex items-center justify-between bg-gray-800 p-7">
-      <h1 className="text-4xl font-black text-zinc-200">Visitor Management</h1>
-      <div className="relative flex w-64 items-center justify-center text-xl font-bold text-zinc-200">
+    <nav
+      className={`fixed top-0 z-50 flex w-full items-center justify-between ${navColor} p-4`}
+    >
+      <h1
+        className="ml-3 flex cursor-pointer items-center justify-between text-3xl font-black text-zinc-200"
+        onMouseEnter={() => setTimeout(() => setHoverHeading(true), 100)}
+        onMouseLeave={() => setTimeout(() => setHoverHeading(false), 100)}
+      >
+        <img src={Logo} alt="logo" className="mr-3 h-16 w-16 -translate-y-2" />
+        {!hoverHeading ? (
+          <>
+            <span className="text-[#9C27B0] transition-all duration-500 ease-linear">
+              V
+            </span>
+            MS
+          </>
+        ) : (
+          <>
+            <span className="mr-2 text-[#9C27B0] transition-all duration-500 ease-linear">
+              Visitor
+            </span>
+            Management System
+          </>
+        )}
+      </h1>
+      <div className="relative flex w-64 items-center justify-evenly text-xl font-bold text-zinc-200">
         {username ? (
           <>
-            <p className="tracking-wider">Hello, {username}</p>
+            <p className="text-xl tracking-wider">
+              <span className="text-[#9C27B0]">Hello,</span> {username}
+            </p>
             <span
-              className={`text-s ml-2 cursor-pointer transition duration-300 ease-in-out hover:scale-125 ${visible ? "rotate-180" : ""}`}
+              className={`ml-2 cursor-pointer text-base transition duration-300 ease-in-out hover:scale-125 ${visible ? "rotate-180" : ""}`}
               onClick={() => setVisible(!visible)}
             >
               {"\u25BF"}
@@ -69,15 +103,9 @@ export default function Navbar() {
           <>
             <Link
               to="/login"
-              className="mr-4 transition duration-150 ease-in-out hover:text-gray-300"
+              className="w-28 translate-x-14 rounded-lg bg-[#9C27B0] p-3 text-center transition duration-300 ease-in-out hover:bg-[#731084]"
             >
               Login
-            </Link>
-            <Link
-              to="/register"
-              className="transition duration-150 ease-in-out hover:text-gray-300"
-            >
-              Register
             </Link>
           </>
         )}
