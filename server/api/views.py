@@ -227,6 +227,9 @@ class VisitorOperations(APIView):
 
 
 class ResetPasswordOperations(APIView):
+    authentication_classes = []
+    permission_classes = []
+
     def post(self, request):
         email = request.data.get("email")
 
