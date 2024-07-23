@@ -6,6 +6,7 @@ import Footer from "../components/Footer";
 import HomeImg from "/homescreen.svg";
 import MeetingImg from "/meeting.png";
 import OfficeImg from "/office.png";
+import PeopleImg from "/people.png";
 import { toast, ToastContainer } from "react-toastify";
 import HomeCard from "../components/HomeCard";
 
@@ -58,6 +59,53 @@ export default function Home() {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  const homeCardsData = [
+    {
+      heading: "Visitors",
+      content: (
+        <>
+          Streamline your <span className="text-[#9C27B0]">visitor</span>{" "}
+          experience with our advanced visitor management system. Effortlessly
+          register, check-in, and check-out visitors using our digital platform.
+          Our solution integrates seamlessly with your existing workflows,
+          enhancing security and productivity while providing a warm welcome to
+          your guests.
+        </>
+      ),
+      DisplayImg: MeetingImg,
+      flexDir: true,
+    },
+    {
+      heading: "Meetings",
+      content: (
+        <>
+          Optimize your meeting{" "}
+          <span className="text-[#9C27B0]">management</span> with our intuitive
+          platform. Easily view team availability, book meeting rooms, and
+          eliminate scheduling conflicts. Our solution fosters efficient
+          collaboration and ensures everyone stays informed and on track.
+        </>
+      ),
+      DisplayImg: OfficeImg,
+      flexDir: false,
+    },
+    {
+      heading: "ID Cards & QR Scanners",
+      content: (
+        <>
+          Enhance your <span className="text-[#9C27B0]">visitor</span>{" "}
+          management process with our secure ID cards and QR scanners. Issue
+          personalized ID cards with QR codes to visitors, enabling quick and
+          easy check-ins and check-outs. Our system ensures efficient tracking
+          and management of all visitors, providing an added layer of security
+          to your premises.
+        </>
+      ),
+      DisplayImg: PeopleImg,
+      flexDir: true,
+    },
+  ];
 
   return (
     <>
@@ -118,8 +166,15 @@ export default function Home() {
             </p>
           </div>
 
-          <HomeCard DisplayImg={MeetingImg} flexDir={true} />
-          <HomeCard DisplayImg={OfficeImg} flexDir={false} />
+          {homeCardsData.map((card, index) => (
+            <HomeCard
+              key={index}
+              heading={card.heading}
+              content={card.content}
+              DisplayImg={card.DisplayImg}
+              flexDir={card.flexDir}
+            />
+          ))}
         </div>
       </div>
       <Footer />
