@@ -1,9 +1,9 @@
-/* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import Logo from "/logo.svg";
+import PropType from "prop-types";
 
 export default function Navbar({ navColor }) {
   const [username, setUsername] = useState(null);
@@ -113,3 +113,7 @@ export default function Navbar({ navColor }) {
     </nav>
   );
 }
+
+Navbar.propTypes = {
+  navColor: PropType.string.isRequired,
+};

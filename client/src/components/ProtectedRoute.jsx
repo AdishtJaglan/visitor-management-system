@@ -1,5 +1,5 @@
-/* eslint-disable react/prop-types */
 import { Navigate } from "react-router-dom";
+import PropTypes from "prop-types";
 
 export default function ProtectedRoute({ children }) {
   const token = localStorage.getItem("token");
@@ -10,3 +10,7 @@ export default function ProtectedRoute({ children }) {
 
   return children;
 }
+
+ProtectedRoute.propTypes = {
+  children: PropTypes.element.isRequired,
+};

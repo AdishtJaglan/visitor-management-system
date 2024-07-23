@@ -1,4 +1,5 @@
-/* eslint-disable react/prop-types */
+import PropTypes from "prop-types";
+
 export default function HomeCard({ flexDir, DisplayImg }) {
   return (
     <div
@@ -26,3 +27,9 @@ export default function HomeCard({ flexDir, DisplayImg }) {
     </div>
   );
 }
+
+HomeCard.propTypes = {
+  flexDir: PropTypes.bool.isRequired,
+  DisplayImg: PropTypes.oneOfType([PropTypes.string, PropTypes.elementType])
+    .isRequired,
+};
