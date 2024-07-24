@@ -133,6 +133,9 @@ class UserOperations(APIView):
 
 
 class VisitorOperations(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         if not request.user.is_user:
             return Response(
@@ -141,19 +144,20 @@ class VisitorOperations(APIView):
             )
 
         data = request.data.copy()
-        data["user"] = request.user.id
+
+        try:
+            user = User.objects.get(id=data.get("user"))
+        except User.DoesNotExist:
+            return Response(
+                {"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         serializer = VisitorSerializer(data=data)
 
-        try:
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-        except IndexError as e:
-            return Response(
-                {"error in creating a visitor": str(e)},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
+        if serializer.is_valid():
+            serializer.save(user=user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
         pk = request.query_params.get("pk")
@@ -174,54 +178,61 @@ class VisitorOperations(APIView):
 
     def put(self, request):
         pk = request.query_params.get("pk")
-
         try:
             if pk:
                 visitor = get_object_or_404(Visitor, pk=pk)
                 serializer = VisitorSerializer(visitor, data=request.data)
-
                 if serializer.is_valid():
                     serializer.save()
                     return Response(serializer.data, status=status.HTTP_200_OK)
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Visitor ID not provided"}, status=status.HTTP_400_BAD_REQUEST
+            )
         except Exception as e:
             return Response(
-                {"error updating visitor information": str(e)},
+                {"error": "Error updating visitor information", "details": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
     def patch(self, request):
         pk = request.query_params.get("pk")
-
         try:
             if pk:
                 visitor = get_object_or_404(Visitor, pk=pk)
                 serializer = VisitorSerializer(visitor, data=request.data, partial=True)
-
                 if serializer.is_valid():
                     serializer.save()
                     return Response(serializer.data, status=status.HTTP_200_OK)
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Visitor ID not provided"}, status=status.HTTP_400_BAD_REQUEST
+            )
         except Exception as e:
             return Response(
-                {"error updating partial visitor information": str(e)},
+                {
+                    "error": "Error updating partial visitor information",
+                    "details": str(e),
+                },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
     def delete(self, request):
         pk = request.query_params.get("pk")
-
         try:
             if pk:
                 visitor = get_object_or_404(Visitor, pk=pk)
                 visitor.delete()
-                return Response(status=status.HTTP_200_OK)
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {"success": "Visitor deleted successfully"},
+                    status=status.HTTP_200_OK,
+                )
+            return Response(
+                {"error": "Visitor ID not provided"}, status=status.HTTP_400_BAD_REQUEST
+            )
         except Exception as e:
             return Response(
-                {"error deleting visitor": str(e)},
+                {"error": "Error deleting visitor", "details": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 

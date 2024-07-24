@@ -7,12 +7,13 @@ from .managers import UserManager
 
 class User(AbstractUser):
     is_super_admin = models.BooleanField(default=False)
-    is_user = models.BooleanField(default=False)
+    is_user = models.BooleanField(default=True)
     role_in_company = models.CharField(max_length=255)
     tenure = models.IntegerField(help_text="Tenure in years")
     phone_number = models.CharField(max_length=15, unique=True)
     email = models.EmailField(unique=True)
     address = models.TextField(blank=True, null=True)
+    organisation = models.CharField(max_length=255)
 
     groups = models.ManyToManyField(
         "auth.Group",
