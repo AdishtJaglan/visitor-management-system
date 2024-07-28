@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Button from "@mui/material/Button";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -7,35 +7,11 @@ import HomeImg from "/homescreen.svg";
 import MeetingImg from "/meeting.png";
 import OfficeImg from "/office.png";
 import PeopleImg from "/people.png";
-import { toast, ToastContainer } from "react-toastify";
+
 import HomeCard from "../components/HomeCard";
 
 export default function Home() {
   const [navbarColor, setNavbarColor] = useState("bg-gray-800");
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (location.state?.isLoggedIn) {
-      toast.success("Login successful!", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
-
-      setTimeout(() => {
-        navigate(".", {
-          state: { ...location.state, isLoggedIn: false },
-          replace: true,
-        });
-      }, 500);
-    }
-  }, [location.state, navigate]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -109,18 +85,6 @@ export default function Home() {
 
   return (
     <>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="colored"
-      />
       <Navbar navColor={navbarColor} />
       <div className="relative flex min-h-screen flex-col">
         <div className="mt-24 flex flex-1 flex-row-reverse items-center justify-evenly gap-4 bg-gray-900 px-6 py-32 text-gray-200">

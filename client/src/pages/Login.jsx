@@ -24,7 +24,7 @@ export default function Login() {
       localStorage.setItem("token", response.data.access);
       localStorage.setItem("rToken", response.data.refresh);
 
-      navigate("/home", { state: { isLoggedIn: true } });
+      navigate("/dashboard", { state: { isLoggedIn: true } });
     } catch (error) {
       toast.error("Error logging in: " + error.message, {
         position: "top-right",
